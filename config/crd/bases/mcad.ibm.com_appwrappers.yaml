@@ -1,0 +1,128 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.12.0
+  name: appwrappers.mcad.ibm.com
+spec:
+  group: mcad.ibm.com
+  names:
+    kind: AppWrapper
+    listKind: AppWrapperList
+    plural: appwrappers
+    singular: appwrapper
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: STATUS
+      type: string
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: AppWrapper object
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: AppWrapperSpec defines the desired state of AppWrapper
+            properties:
+              maxRetries:
+                description: Max requeuings
+                format: int32
+                type: integer
+              minPods:
+                description: 'Minimum number of pods that need to run and succeed
+                  These pods have to be labeled with the AppWrapper name to be accounted
+                  for and monitored by mcad: mcad.codeflare.dev: <appwrapper-name>'
+                format: int32
+                type: integer
+              priority:
+                description: Priority
+                format: int32
+                type: integer
+              resources:
+                description: Wrapped resources
+                items:
+                  description: AppWrapperResource is the schema for the wrapped resources
+                  properties:
+                    replicas:
+                      description: Replica count
+                      format: int32
+                      type: integer
+                    requests:
+                      additionalProperties:
+                        anyOf:
+                        - type: integer
+                        - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      description: Resource requests per replica
+                      type: object
+                    template:
+                      description: Resource template
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  required:
+                  - replicas
+                  - requests
+                  - template
+                  type: object
+                type: array
+            required:
+            - resources
+            type: object
+          status:
+            description: AppWrapperStatus defines the observed state of AppWrapper
+            properties:
+              conditions:
+                description: Conditions
+                items:
+                  description: AppWrapper condition
+                  properties:
+                    lastTransitionTime:
+                      description: Timestamp
+                      format: date-time
+                      type: string
+                    reason:
+                      description: Condition
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  type: object
+                type: array
+              lastDispatchTime:
+                description: When last dispatched
+                format: date-time
+                type: string
+              lastRequeuingTime:
+                description: When last requeued
+                format: date-time
+                type: string
+              phase:
+                description: Phase
+                type: string
+              requeued:
+                description: How many times requeued
+                format: int32
+                type: integer
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

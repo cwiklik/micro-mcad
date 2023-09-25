@@ -1,4 +1,4 @@
-apiVersion: mcad.codeflare.dev/v1beta1
+apiVersion: mcad.ibm.com/v1beta1
 kind: AppWrapper
 metadata:
   namespace: default

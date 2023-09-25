@@ -1,4 +1,4 @@
-module github.com/tardieu/mcad
+module github.com/cwiklik/micro-mcad
 
 go 1.20
 
